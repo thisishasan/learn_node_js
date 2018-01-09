@@ -55,6 +55,32 @@ app.get('/article/:id',function(req,res){
   });
 });
 
+app.get('/articles/edit/:id',function(req,res){
+  Article.findById(req.params.id,function(err, article){
+    res.render('edit_article',{
+      title: "Edit Article",
+      article : article
+    });
+  });
+});
+
+app.post('/articles/edit/:id',function(req,res){
+  let article = {};
+  article.title = req.body.title;
+  article.author = req.body.author;
+  article.body = req.body.body;
+  console.log(article);
+  let query = {_id : req.params.id };
+  Article.update(query, article, function(err){
+    if(err){
+      console.log(err);
+      return;
+    }else{
+      res.redirect('/');
+    }
+  });
+});
+
 app.post('/articles/add',function(req,res){
   let article = new Article();
   article.title = req.body.title;
@@ -67,6 +93,17 @@ app.post('/articles/add',function(req,res){
     }else{
       res.redirect('/');
     }
+  });
+});
+
+app.delete('/article/:id',function(req, res){
+  let query = {_id: req.params.id };
+  Article.remove(query, function(err){
+    if(err){
+      console.log(err);
+      return;
+    }
+    res.send("Success");
   });
 });
 
